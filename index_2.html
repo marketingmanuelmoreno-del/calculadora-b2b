@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery B2B</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f6;
+    --bg3: #f0efe9;
+    --text: #1a1a1a;
+    --text2: #6b6b68;
+    --text3: #9e9e9a;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --green: #0F6E56;
+    --green-bg: #EAF3DE;
+    --green-text: #27500A;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --amber-text: #633806;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --red-text: #791F1F;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg2: #252523;
+      --bg3: #2e2e2b;
+      --text: #f0efe9;
+      --text2: #9e9e9a;
+      --text3: #6b6b68;
+      --border: rgba(255,255,255,0.12);
+      --border2: rgba(255,255,255,0.22);
+      --blue: #85B7EB;
+      --blue-bg: #042C53;
+      --green: #5DCAA5;
+      --green-bg: #085041;
+      --green-text: #9FE1CB;
+      --amber: #FAC775;
+      --amber-bg: #412402;
+      --amber-text: #EF9F27;
+      --red: #F09595;
+      --red-bg: #501313;
+      --red-text: #F7C1C1;
+    }
+  }
+  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); font-size: 14px; }
+
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: 270px; min-width: 270px; background: var(--bg2); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  .topbar { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 8px 12px; display: flex; align-items: center; gap: 6px; position: sticky; top: 0; z-index: 10; flex-wrap: wrap; }
+  .topbar .label { font-size: 12px; color: var(--text2); }
+  .timer { font-weight: 600; font-size: 13px; color: var(--text); margin-left: 2px; }
+  .btn-sm { font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .btn-sm:hover { background: var(--bg3); color: var(--text); }
+
+  .section { border-bottom: 0.5px solid var(--border); }
+  .section-title { padding: 9px 14px; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; gap: 6px; }
+  .section-title:hover { background: var(--bg); }
+  .section-title .icon { font-size: 14px; color: var(--text2); flex-shrink: 0; }
+  .section-title .lbl { flex: 1; }
+  .chevron { font-size: 12px; color: var(--text3); transition: transform 0.2s; }
+  .collapsed .chevron { transform: rotate(-90deg); }
+  .collapsed .section-body { display: none; }
+  .section-body { padding: 6px 14px 12px; }
+
+  .field { margin-bottom: 8px; }
+  .field label { display: block; font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .field input[type="number"], .field select, .field textarea {
+    width: 100%; font-size: 13px; padding: 5px 8px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius);
+    background: var(--bg); color: var(--text); outline: none;
+    font-family: inherit;
+  }
+  .field input[type="number"]:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); }
+  .field-row { display: flex; gap: 8px; }
+  .field-row .field { flex: 1; min-width: 0; }
+
+  .toggle-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .toggle-btn { font-size: 11px; padding: 4px 9px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; }
+  .toggle-btn:hover { background: var(--bg3); }
+  .toggle-btn.active { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); font-weight: 600; }
+
+  .yes-no { display: flex; gap: 6px; }
+  .yes-no button { font-size: 12px; padding: 4px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; }
+  .yes-no button.yes.active { background: var(--green-bg); color: var(--green-text); border-color: var(--green); font-weight: 600; }
+  .yes-no button.no.active { background: var(--red-bg); color: var(--red-text); border-color: var(--red); font-weight: 600; }
+
+  .calc-value { font-size: 13px; font-weight: 600; color: var(--blue); }
+
+  .workspace-link { padding: 10px 14px; font-size: 11px; color: var(--text3); border-top: 0.5px solid var(--border); margin-top: auto; display: flex; align-items: center; gap: 5px; }
+  .workspace-link a { color: var(--blue); text-decoration: none; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; min-width: 0; }
+  .diag-header { padding: 12px 18px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 8px; background: var(--bg); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .diag-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .diag-body { padding: 18px; flex: 1; overflow-y: auto; }
+  .diag-body::-webkit-scrollbar { width: 4px; }
+  .diag-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  .placeholder { color: var(--text3); font-size: 13px; text-align: center; margin-top: 60px; line-height: 1.8; }
+  .placeholder i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--border2); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .kpi-card { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; }
+  .kpi-label { font-size: 10px; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi-value { font-size: 20px; font-weight: 700; color: var(--text); }
+  .kpi-value.danger { color: var(--red); }
+  .kpi-value.warning { color: var(--amber); }
+  .kpi-value.success { color: var(--green); }
+
+  .diag-section { margin-bottom: 20px; }
+  .diag-section-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+
+  .funnel-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .funnel-label { font-size: 11px; color: var(--text2); width: 140px; flex-shrink: 0; }
+  .funnel-bar-wrap { flex: 1; background: var(--bg3); border-radius: 3px; height: 7px; overflow: hidden; min-width: 0; }
+  .funnel-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .funnel-num { font-size: 12px; font-weight: 600; color: var(--text); width: 44px; text-align: right; flex-shrink: 0; }
+  .funnel-pct { font-size: 11px; color: var(--text3); width: 34px; text-align: right; flex-shrink: 0; }
+
+  .alert-list { display: flex; flex-direction: column; gap: 7px; }
+  .alert-item { font-size: 12px; padding: 8px 10px; border-radius: var(--radius); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .alert-item i { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .alert-item.danger { background: var(--red-bg); color: var(--red-text); }
+  .alert-item.warning { background: var(--amber-bg); color: var(--amber-text); }
+  .alert-item.success { background: var(--green-bg); color: var(--green-text); }
+
+  .diag-textarea { width: 100%; font-size: 11px; padding: 8px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg2); color: var(--text2); resize: vertical; font-family: 'Courier New', monospace; line-height: 1.6; }
+  .copy-btn { margin-top: 8px; font-size: 12px; padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .copy-btn:hover { background: var(--bg2); color: var(--text); }
+
+  @media (max-width: 700px) {
+    .app { flex-direction: column; height: auto; }
+    .sidebar { width: 100%; min-width: unset; max-height: 60vh; overflow-y: auto; }
+    .main { height: auto; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="topbar">
+      <span class="label">Prospecto</span>
+      <span class="timer" id="timer">⏱ 00:00</span>
+      <button class="btn-sm" onclick="resetTimer()"><i class="ti ti-refresh"></i> Nueva llamada</button>
+      <button class="btn-sm" onclick="copyDiag()"><i class="ti ti-copy"></i> Copiar diagnóstico</button>
+    </div>
+
+    <!-- NEGOCIO -->
+    <div class="section" id="sec-negocio">
+      <div class="section-title" onclick="toggle('sec-negocio')">
+        <i class="ti ti-building icon"></i>
+        <span class="lbl">Negocio</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>Ticket promedio ($)</label><input type="number" id="ticket" placeholder="0" oninput="calc()"></div>
+        <div class="field-row">
+          <div class="field"><label># Closers</label><input type="number" id="closers" placeholder="0" oninput="calc()"></div>
+          <div class="field"><label># Setters</label><input type="number" id="setters" placeholder="0" oninput="calc()"></div>
+        </div>
+        <div class="field">
+          <label>Canal principal de adquisición</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="setToggle('canal',this,'organico')">🌱 Orgánico</button>
+            <button class="toggle-btn" onclick="setToggle('canal',this,'mixto')">⚡ Mixto</button>
+            <button class="toggle-btn" onclick="setToggle('canal',this,'anuncios')">📣 Anuncios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPACIDAD -->
+    <div class="section" id="sec-capacidad">
+      <div class="section-title" onclick="toggle('sec-capacidad')">
+        <i class="ti ti-calendar-stats icon"></i>
+        <span class="lbl">Capacidad Closers / mes</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field-row">
+          <div class="field"><label>Horas disp./closer/día</label><input type="number" id="horas" placeholder="4" oninput="calc()"></div>
+          <div class="field"><label>Duración llamada (min)</label><input type="number" id="duracion" placeholder="60" oninput="calc()"></div>
+        </div>
+        <div class="field"><label>Días hábiles / mes</label><input type="number" id="dias" placeholder="22" oninput="calc()"></div>
+        <div class="field"><label>Slots disponibles / mes</label><span class="calc-value" id="slots">— calculado</span></div>
+      </div>
+    </div>
+
+    <!-- ADQUISICIÓN -->
+    <div class="section" id="sec-adq">
+      <div class="section-title" onclick="toggle('sec-adq')">
+        <i class="ti ti-target icon"></i>
+        <span class="lbl">Adquisición</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>Leads totales / mes</label><input type="number" id="leads" placeholder="0" oninput="calc()"></div>
+        <div class="field-row">
+          <div class="field"><label>Leads de anuncios</label><input type="number" id="leadsAd" placeholder="0" oninput="calc()"></div>
+          <div class="field"><label>Leads orgánicos</label><input type="number" id="leadsOrg" placeholder="0" oninput="calc()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTING -->
+    <div class="section" id="sec-setting">
+      <div class="section-title" onclick="toggle('sec-setting')">
+        <i class="ti ti-message-2 icon"></i>
+        <span class="lbl">Setting (Agendamiento)</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>Links enviados</label><input type="number" id="links" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Llamadas agendadas</label><input type="number" id="agendadas" placeholder="0" oninput="calc()"></div>
+      </div>
+    </div>
+
+    <!-- EJECUCIÓN -->
+    <div class="section" id="sec-ejecucion">
+      <div class="section-title" onclick="toggle('sec-ejecucion')">
+        <i class="ti ti-trophy icon"></i>
+        <span class="lbl">Ejecución (Closers)</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>Asistencias (shows)</label><input type="number" id="shows" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Presentaciones de oferta</label><input type="number" id="presentaciones" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Ventas cerradas</label><input type="number" id="ventas" placeholder="0" oninput="calc()"></div>
+      </div>
+    </div>
+
+    <!-- FINANCIERO -->
+    <div class="section" id="sec-financiero">
+      <div class="section-title" onclick="toggle('sec-financiero')">
+        <i class="ti ti-coin icon"></i>
+        <span class="lbl">Financiero</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>Revenue mensual ($)</label><input type="number" id="revenue" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Cash Collected (CC) ($)</label><input type="number" id="cc" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Rev. Máx (upsells+refs+seguimientos) ($)</label><input type="number" id="revMax" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Inversión en anuncios ($)</label><input type="number" id="invAd" placeholder="0" oninput="calc()"></div>
+        <div class="field"><label>Revenue desde anuncios ($)</label><input type="number" id="revAd" placeholder="0" oninput="calc()"></div>
+      </div>
+    </div>
+
+    <!-- RECUPERACIÓN -->
+    <div class="section" id="sec-recuperacion">
+      <div class="section-title" onclick="toggle('sec-recuperacion')">
+        <i class="ti ti-refresh icon"></i>
+        <span class="lbl">Procesos de Recuperación</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>¿Tienen seguimiento activo para no-shows?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'noshows',true)">Sí</button><button class="no" onclick="setYN(this,'noshows',false)">No</button></div></div>
+        <div class="field"><label>¿Trabajan activamente los leads cancelados?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'cancelados',true)">Sí</button><button class="no" onclick="setYN(this,'cancelados',false)">No</button></div></div>
+        <div class="field"><label>¿Hacen seguimiento a leads que no cerraron?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'sinCerrar',true)">Sí</button><button class="no" onclick="setYN(this,'sinCerrar',false)">No</button></div></div>
+        <div class="field"><label>¿Hacen upsells a clientes actuales?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'upsells',true)">Sí</button><button class="no" onclick="setYN(this,'upsells',false)">No</button></div></div>
+        <div class="field"><label>¿Tienen programa activo de referidos?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'referidos',true)">Sí</button><button class="no" onclick="setYN(this,'referidos',false)">No</button></div></div>
+        <div class="field"><label>¿Han probado algo antes para resolver el problema?</label><div class="yes-no"><button class="yes" onclick="setYN(this,'intentos',true)">Sí</button><button class="no" onclick="setYN(this,'intentos',false)">No</button></div></div>
+      </div>
+    </div>
+
+    <!-- NOTAS -->
+    <div class="section" id="sec-notas">
+      <div class="section-title" onclick="toggle('sec-notas')">
+        <i class="ti ti-notes icon"></i>
+        <span class="lbl">Notas de la llamada</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="section-body">
+        <div class="field"><textarea id="notas" rows="5" placeholder="Escribe observaciones de la llamada..." oninput="calc()"></textarea></div>
+      </div>
+    </div>
+
+    <div class="workspace-link">
+      <i class="ti ti-layout-grid" style="font-size:13px;"></i>
+      <a href="#" target="_blank">Mi Workspace</a>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="main">
+    <div class="diag-header">
+      <span class="dot"></span>
+      <span class="diag-title">Diagnóstico en tiempo real</span>
+    </div>
+    <div class="diag-body">
+      <div id="diagPlaceholder" class="placeholder">
+        <i class="ti ti-chart-dots-3"></i>
+        Comienza a ingresar datos en el formulario
+      </div>
+      <div id="diagContent" style="display:none;">
+
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Revenue mensual</div><div class="kpi-value" id="kpi-rev">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Ventas cerradas</div><div class="kpi-value" id="kpi-ventas">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Ticket promedio</div><div class="kpi-value" id="kpi-ticket">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Cierre de leads</div><div class="kpi-value" id="kpi-cierreLeads">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Show rate</div><div class="kpi-value" id="kpi-show">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Close rate (shows)</div><div class="kpi-value" id="kpi-close">—</div></div>
+        </div>
+
+        <div class="diag-section">
+          <div class="diag-section-label">Embudo de ventas</div>
+          <div id="funnelRows"></div>
+        </div>
+
+        <div class="diag-section">
+          <div class="diag-section-label">Alertas y oportunidades</div>
+          <div class="alert-list" id="alertList"></div>
+        </div>
+
+        <div class="diag-section">
+          <div class="diag-section-label">Diagnóstico exportable</div>
+          <textarea class="diag-textarea" id="diagText" rows="8" readonly></textarea>
+          <button class="copy-btn" onclick="copyDiag()"><i class="ti ti-copy"></i> Copiar diagnóstico</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const yn = {};
+let timerInterval = null, seconds = 0, running = false;
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function startTimer(){
+  if(running) return;
+  running = true;
+  timerInterval = setInterval(()=>{
+    seconds++;
+    document.getElementById('timer').textContent = '⏱ ' + pad(Math.floor(seconds/60)) + ':' + pad(seconds%60);
+  }, 1000);
+}
+function resetTimer(){
+  clearInterval(timerInterval); running = false; seconds = 0;
+  document.getElementById('timer').textContent = '⏱ 00:00';
+  startTimer();
+}
+startTimer();
+
+function toggle(id){
+  document.getElementById(id).classList.toggle('collapsed');
+}
+function setToggle(group, btn, val){
+  document.querySelectorAll('#' + group + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calc();
+}
+function setYN(btn, key, val){
+  const par = btn.parentElement;
+  par.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  yn[key] = val;
+  calc();
+}
+function v(id){ return parseFloat(document.getElementById(id).value) || 0; }
+function pct(a, b){ return b > 0 ? Math.round(a / b * 100) : 0; }
+function fmt$(n){ return '$' + Math.round(n).toLocaleString('es-MX'); }
+
+function calc(){
+  const ticket = v('ticket'), closersN = v('closers');
+  const horas = v('horas'), duracion = v('duracion'), dias = v('dias');
+  const leads = v('leads');
+  const agendadas = v('agendadas'), shows = v('shows');
+  const presentaciones = v('presentaciones'), ventas = v('ventas');
+  const revenue = v('revenue'), invAd = v('invAd'), revAd = v('revAd');
+
+  const slots = (closersN > 0 && horas > 0 && duracion > 0 && dias > 0)
+    ? Math.round(closersN * (horas * 60 / duracion) * dias) : 0;
+  document.getElementById('slots').textContent = slots > 0 ? slots + ' slots' : '— calculado';
+
+  const hasData = leads > 0 || agendadas > 0 || shows > 0 || ventas > 0 || revenue > 0;
+  document.getElementById('diagPlaceholder').style.display = hasData ? 'none' : 'block';
+  document.getElementById('diagContent').style.display = hasData ? 'block' : 'none';
+  if (!hasData) return;
+
+  const showRate = pct(shows, agendadas);
+  const closeRate = pct(ventas, shows);
+  const cierreLeads = pct(ventas, leads);
+  const roas = (invAd > 0 && revAd > 0) ? (revAd / invAd).toFixed(2) : null;
+
+  document.getElementById('kpi-rev').textContent = revenue > 0 ? fmt$(revenue) : '—';
+  document.getElementById('kpi-ventas').textContent = ventas > 0 ? ventas : '—';
+  document.getElementById('kpi-ticket').textContent = ticket > 0 ? fmt$(ticket) : '—';
+  document.getElementById('kpi-cierreLeads').textContent = (leads > 0 && ventas > 0) ? cierreLeads + '%' : '—';
+
+  const ks = document.getElementById('kpi-show');
+  ks.textContent = (agendadas > 0 && shows > 0) ? showRate + '%' : '—';
+  ks.className = 'kpi-value' + (showRate > 0 && showRate < 60 ? ' danger' : showRate >= 60 && showRate < 75 ? ' warning' : showRate >= 75 ? ' success' : '');
+
+  const kc = document.getElementById('kpi-close');
+  kc.textContent = (shows > 0 && ventas > 0) ? closeRate + '%' : '—';
+  kc.className = 'kpi-value' + (closeRate > 0 && closeRate < 20 ? ' danger' : closeRate >= 20 && closeRate < 35 ? ' warning' : closeRate >= 35 ? ' success' : '');
+
+  const funnelData = [];
+  if (leads > 0) funnelData.push({ label: 'Leads totales', val: leads, color: '#378ADD' });
+  if (agendadas > 0) funnelData.push({ label: 'Agendadas', val: agendadas, color: '#1D9E75' });
+  if (shows > 0) funnelData.push({ label: 'Shows', val: shows, color: '#BA7517' });
+  if (presentaciones > 0) funnelData.push({ label: 'Presentaciones', val: presentaciones, color: '#7F77DD' });
+  if (ventas > 0) funnelData.push({ label: 'Ventas cerradas', val: ventas, color: '#0F6E56' });
+  const maxVal = funnelData.length > 0 ? funnelData[0].val : 1;
+
+  document.getElementById('funnelRows').innerHTML = funnelData.map((f, i) => {
+    const barPct = Math.round(f.val / maxVal * 100);
+    const convPct = i > 0 ? pct(f.val, funnelData[i-1].val) : null;
+    return `<div class="funnel-row">
+      <span class="funnel-label">${f.label}</span>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${barPct}%;background:${f.color}"></div></div>
+      <span class="funnel-num">${f.val}</span>
+      <span class="funnel-pct">${convPct !== null ? convPct + '%' : ''}</span>
+    </div>`;
+  }).join('');
+
+  const alerts = [];
+  if (showRate > 0 && showRate < 60) alerts.push({ type: 'danger', msg: 'Show rate crítico (' + showRate + '%). Menos de 6 de cada 10 prospectos asisten. Revisar confirmaciones.' });
+  else if (showRate >= 60 && showRate < 75) alerts.push({ type: 'warning', msg: 'Show rate mejorable (' + showRate + '%). Implementar secuencia de confirmación por WhatsApp.' });
+  else if (showRate >= 75) alerts.push({ type: 'success', msg: 'Buen show rate (' + showRate + '%). Prospectos comprometidos.' });
+  if (closeRate > 0 && closeRate < 20) alerts.push({ type: 'danger', msg: 'Close rate bajo (' + closeRate + '%). Revisar pitch, calidad de leads y manejo de objeciones.' });
+  else if (closeRate >= 20 && closeRate < 35) alerts.push({ type: 'warning', msg: 'Close rate puede mejorar (' + closeRate + '%). Trabajar objeciones de precio y timing.' });
+  else if (closeRate >= 35) alerts.push({ type: 'success', msg: 'Excelente close rate (' + closeRate + '%). Equipo ejecutando bien.' });
+  if (slots > 0 && shows > 0 && shows > slots * 0.9) alerts.push({ type: 'warning', msg: 'Cerca de saturar capacidad de closers. Considerar escalar equipo.' });
+  if (yn['noshows'] === false) alerts.push({ type: 'warning', msg: 'Sin seguimiento a no-shows: oportunidad de recuperar ' + Math.round((agendadas - shows) * closeRate / 100 || 0) + ' ventas/mes.' });
+  if (yn['referidos'] === false) alerts.push({ type: 'warning', msg: 'Sin programa de referidos. Canal de adquisición de costo $0 sin explotar.' });
+  if (yn['upsells'] === false && revenue > 0) alerts.push({ type: 'warning', msg: 'Sin estrategia de upsells. Clientes actuales = segmento más fácil de monetizar.' });
+  if (roas !== null && parseFloat(roas) < 2) alerts.push({ type: 'danger', msg: 'ROAS bajo (' + roas + 'x). Inversión en anuncios generando menos de 2x retorno.' });
+  else if (roas !== null && parseFloat(roas) >= 3) alerts.push({ type: 'success', msg: 'ROAS sólido (' + roas + 'x). Anuncios rentables.' });
+  if (alerts.length === 0) alerts.push({ type: 'success', msg: 'Sin alertas críticas detectadas. Continuar optimizando métricas.' });
+
+  const iconMap = { danger: 'ti-alert-circle', warning: 'ti-alert-triangle', success: 'ti-circle-check' };
+  document.getElementById('alertList').innerHTML = alerts.map(a =>
+    `<div class="alert-item ${a.type}"><i class="ti ${iconMap[a.type]}"></i>${a.msg}</div>`
+  ).join('');
+
+  const notas = document.getElementById('notas').value;
+  const text = [
+    '=== DIAGNÓSTICO DISCOVERY B2B ===',
+    'Fecha: ' + new Date().toLocaleDateString('es-MX'),
+    '',
+    '📊 MÉTRICAS CLAVE',
+    'Revenue mensual: ' + (revenue > 0 ? fmt$(revenue) : '—'),
+    'Ventas cerradas: ' + (ventas || '—'),
+    'Ticket promedio: ' + (ticket > 0 ? fmt$(ticket) : '—'),
+    'Show rate: ' + (agendadas > 0 ? showRate + '%' : '—'),
+    'Close rate: ' + (shows > 0 ? closeRate + '%' : '—'),
+    'Cierre de leads: ' + (leads > 0 && ventas > 0 ? cierreLeads + '%' : '—'),
+    roas ? 'ROAS anuncios: ' + roas + 'x' : '',
+    '',
+    '🔻 EMBUDO',
+    ...funnelData.map(f => f.label + ': ' + f.val),
+    '',
+    '🚨 ALERTAS',
+    ...alerts.map(a => (a.type === 'danger' ? '❌' : a.type === 'warning' ? '⚠️' : '✅') + ' ' + a.msg),
+    notas ? '\n📝 NOTAS\n' + notas : ''
+  ].filter(l => l !== undefined).join('\n');
+
+  document.getElementById('diagText').value = text;
+}
+
+function copyDiag(){
+  const txt = document.getElementById('diagText');
+  if (!txt || !txt.value) return;
+  navigator.clipboard.writeText(txt.value).then(() => {
+    const btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(b => { b.innerHTML = '<i class="ti ti-check"></i> ¡Copiado!'; });
+    setTimeout(() => { btns.forEach(b => { b.innerHTML = '<i class="ti ti-copy"></i> Copiar diagnóstico'; }); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
